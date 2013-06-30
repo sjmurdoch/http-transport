@@ -183,6 +183,10 @@ the eye but could be made to pass most automated checks.
 obfuscation, session-key establishment and bulk encryption, so may be a useful
 basis for further work.
 
+[BOSH][bosh] implements TCP over HTTP and it meets many of the requirements
+needed, but makes no attempt to be indistinguishable from normal web browsing
+and has no scanning-resistance provision.
+
 <!-- References -->
 
 [uniformdh]:https://lists.torproject.org/pipermail/tor-dev/2012-December/004245.html
@@ -202,3 +206,5 @@ basis for further work.
 [scramblesuit]:http://www.cs.kau.se/philwint/scramblesuit/
 
 [fte]:http://eprint.iacr.org/2012/494
+
+[bosh]:http://xmpp.org/extensions/xep-0124.html
