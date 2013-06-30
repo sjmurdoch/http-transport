@@ -1,8 +1,7 @@
 <!-- Keep lines to 80 columns
 01234567890123456789012345678901234567890123456789012345678901234567890123456789
         10        20        30        40        50        60        70        80
-Format with: fmt -p -l 0 -w 80
--->
+Format with: fmt -p -l 0 -w 80 -->
 
 # Tor over HTTP
 
@@ -13,12 +12,12 @@ Format with: fmt -p -l 0 -w 80
  * To a passive adversary, the communications is not efficiently and reliably
    distinguishable from a user browsing the web connecting with a commonly used
    web browser to a commonly used web browser
-   
+
  * Any tampering of the communication between bridge client and server, which is
    within the HTTP specification of what a proxy is permitted to do, or which
    commonly used proxies do, should not alter the data that Tor is sending to or
    receiving from the pluggable transport
-   
+
  * Any other tampering should result in the connection being torn down (perhaps
    simply by sending corrupt data to Tor, which will be detected by TLS)
 
@@ -26,7 +25,7 @@ Format with: fmt -p -l 0 -w 80
 
  * User and bridge operator do not share a secret (user knows port and IP of
    bridge)
-   
+
  * It is unavoidable that someone connecting to the bridge over HTTP and
    attempting a handshake will discover that it is a Tor bridge
 
@@ -104,26 +103,42 @@ but proxy servers may not support chunked mode.
 ## Bi-directional data
 
 Tor requires that communication exchanges be initiated either by the bridge
-client or bridge server. In contrast HTTP clients initiate all communications. There are a few ways to avoid this problem:
+client or bridge server. In contrast HTTP clients initiate all communications.
+There are a few ways to avoid this problem:
 
- *  The client periodically polls the server to check if any data is available 
-  
- *  The client keeps a long-running [Comet][comet] TCP connection, on which the server can send responses
-  
- *  The client and server both act as HTTP clients and HTTP servers, so can each send data when they wish
+ *  The client periodically polls the server to check if any data is available
+
+ *  The client keeps a long-running [Comet][comet] TCP connection, on which the
+ server can send responses
+
+ *  The client and server both act as HTTP clients and HTTP servers, so can each
+ send data when they wish
 
 ## Proxy busting
 
-Proxies will, under certain conditions, not send a request they receive to the destination server, but instead serve whatever the proxy thinks is the correct response. The HTTP specification dictates a proxy's behaviour but some proxy servers may deviate from the requirements. The pluggable transport will therefore need to either prevent the proxy from
-caching responses or detect cached data and trigger a re-transmission. It may be unusual behaviour for a HTTP client to always send unique requests, so it perhaps should occasionally send dummy requests which are the same as before and so would be cached.
+Proxies will, under certain conditions, not send a request they receive to the
+destination server, but instead serve whatever the proxy thinks is the correct
+response. The HTTP specification dictates a proxy's behaviour but some proxy
+servers may deviate from the requirements. The pluggable transport will
+therefore need to either prevent the proxy from caching responses or detect
+cached data and trigger a re-transmission. It may be unusual behaviour for a
+HTTP client to always send unique requests, so it perhaps should occasionally
+send dummy requests which are the same as before and so would be cached.
 
 ## Packet-size obfuscation
 
-Tor sends 512 bytes cells and so results in very distinctive TLS Application Record sizes. It may be necessary to [alter packet length][morpher] to hide such patterns.
+Tor sends 512 bytes cells and so results in very distinctive TLS Application
+Record sizes. It may be necessary to [alter packet length][morpher] to hide such
+patterns.
 
 ## Encoding
 
-Once data has been split, coded for error detection, and its size obfuscated, it must be encoded as a HTTP request or response. With HTTP, data is generally sent from server to client, so client to server channels are problematic. For this reason implementing a HTTP server on both the pluggable transport client and pluggable transport server is desirable, but this approach stands out in other ways.
+Once data has been split, coded for error detection, and its size obfuscated, it
+must be encoded as a HTTP request or response. With HTTP, data is generally sent
+from server to client, so client to server channels are problematic. For this
+reason implementing a HTTP server on both the pluggable transport client and
+pluggable transport server is desirable, but this approach stands out in other
+ways.
 
 Possible channels for encoding data are:
 
@@ -145,19 +160,28 @@ Very common, so probably a good choice
 
 ### File types
 
-For both HTTP POST and HTTP GET, a file format must be chosen into which data is encoded. Some possibilities are:
+For both HTTP POST and HTTP GET, a file format must be chosen into which data is
+encoded. Some possibilities are:
 
 #### Images
 
-Both PNG and JPEG images are very common on the Internet, and do contain high-entropy data so are good candidates for encoding Tor payloads. However, a more sophisticated adversary may try to use a PNG or JPEG decoder to check whether the file is valid or not, requiring a more sophisticated encoder to defeat.
+Both PNG and JPEG images are very common on the Internet, and do contain
+high-entropy data so are good candidates for encoding Tor payloads. However, a
+more sophisticated adversary may try to use a PNG or JPEG decoder to check
+whether the file is valid or not, requiring a more sophisticated encoder to
+defeat.
 
 #### HTML/Javascript/CSS
 
-It would be possible to encode data as HTML or Javascript, for example using [Format-Transforming Encryption][fte]. Such content would look implausible to the eye but could be made to pass most automated checks.
+It would be possible to encode data as HTML or Javascript, for example using
+[Format-Transforming Encryption][fte]. Such content would look implausible to
+the eye but could be made to pass most automated checks.
 
 # Related work
 
-[ScrambleSuit][scramblesuit] implements scanning resistance, packet-size obfuscation, session-key establishment and bulk encryption, so may be a useful basis for further work.
+[ScrambleSuit][scramblesuit] implements scanning resistance, packet-size
+obfuscation, session-key establishment and bulk encryption, so may be a useful
+basis for further work.
 
 <!-- References -->
 
